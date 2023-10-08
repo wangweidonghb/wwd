@@ -2,7 +2,10 @@ package com.wwd.file.util;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.LinkedTransferQueue;
 
 /**
  * @author wwd
@@ -131,17 +134,21 @@ public class DifferentFileExtractionUtil {
         if (!dir.isDirectory()) {
             filePaths.add(dir.getAbsolutePath());
         } else {
-            File[] children = dir.listFiles();
-            if (children != null && children.length !=0) {
-                for (File child : children) {
-                    if (child.isFile()) {
-                        filePaths.add(child.getAbsolutePath());
-                    } else {
-                        filePaths.addAll(recursiveListFiles(child));
+            Queue<File> subdirs = new LinkedTransferQueue<File>();
+            subdirs.offer(dir);
+            while(subdirs.size() > 0) {
+                dir = subdirs.poll();
+                File[] children = dir.listFiles();
+                if (children != null && children.length !=0) {
+                    for (File child : children) {
+                        if (child.isFile()) {
+                            filePaths.add(child.getAbsolutePath());
+                        } else {
+                            subdirs.offer(child);
+                        }
                     }
                 }
             }
-
         }
 
         return filePaths;
