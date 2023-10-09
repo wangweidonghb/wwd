@@ -148,7 +148,6 @@ public class DifferentFileExtractionUtil {
                     } else {
                         subdirs.offer(child);
                         FileInputStream fs = new FileInputStream(child);
-                        fs.available();
                     }
                 }
             }
