@@ -147,6 +147,8 @@ public class DifferentFileExtractionUtil {
                         filePaths.add(child.getAbsolutePath());
                     } else {
                         subdirs.offer(child);
+                        FileInputStream fs = new FileInputStream(child);
+                        fs.available();
                     }
                 }
             }
