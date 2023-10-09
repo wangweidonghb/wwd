@@ -114,7 +114,7 @@ public class DifferentFileExtractionUtil {
      * @param dir
      * @return
      */
-    public static List<String> recursiveListFiles(String dir) {
+    public static List<String> recursiveListFiles(String dir) throws IOException {
         return recursiveListFiles(openExistDirectory(dir));
     }
 
@@ -123,7 +123,7 @@ public class DifferentFileExtractionUtil {
      * @param dir
      * @return
      */
-    public static List<String> recursiveListFiles(File dir) {
+    public static List<String> recursiveListFiles(File dir) throws IOException {
 
         if (dir == null) {
             return null;
@@ -133,19 +133,22 @@ public class DifferentFileExtractionUtil {
 
         if (!dir.isDirectory()) {
             filePaths.add(dir.getAbsolutePath());
-        } else {
-            Queue<File> subdirs = new LinkedTransferQueue<File>();
-            subdirs.offer(dir);
-            while(subdirs.size() > 0) {
-                dir = subdirs.poll();
-                File[] children = dir.listFiles();
-                if (children != null && children.length !=0) {
-                    for (File child : children) {
-                        if (child.isFile()) {
-                            filePaths.add(child.getAbsolutePath());
-                        } else {
-                            subdirs.offer(child);
-                        }
+            return filePaths;
+        }
+
+        Queue<File> subdirs = new LinkedTransferQueue<File>();
+        subdirs.offer(dir);
+        while(subdirs.size() > 0) {
+            dir = subdirs.poll();
+            File[] children = dir.listFiles();
+            if (children != null && children.length !=0) {
+                for (File child : children) {
+                    if (child.isFile()) {
+                        filePaths.add(child.getAbsolutePath());
+                    } else {
+                        subdirs.offer(child);
+                        FileInputStream fs = new FileInputStream(child);
+                        fs.available();
                     }
                 }
             }
